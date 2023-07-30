@@ -1,8 +1,7 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from "typeorm";
 import AppUtils from '../utils/app.utilities';
 import { DateTimeBaseEntity } from "./date.time.entity";
 import { Event } from "./event.entity";
-import { EventTrackingPlan } from "./event.tracking.plan";
 
 @Entity()
 export class TrackingPlan extends DateTimeBaseEntity {
@@ -12,9 +11,12 @@ export class TrackingPlan extends DateTimeBaseEntity {
     @Column()
     public name!: string;
 
-    @ManyToMany(() => Event, event => event.trackingPlans)
-    public events!: Event[];
+    @Column()
+    public description!: string;
 
-    @OneToMany(() => EventTrackingPlan, etp => etp.trackingPlan)
-    public eventTrackingPlans!: EventTrackingPlan[];
+    @ManyToMany(() => Event, event => event.trackingPlans, { cascade: true })
+    @JoinTable({name : "tracking_plan_event",
+    joinColumn: {name: "tracking_plan_id"},
+    inverseJoinColumn: { name: "event_id"}})
+    public events!: Event[];
 }

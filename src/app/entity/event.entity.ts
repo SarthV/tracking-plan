@@ -2,7 +2,6 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from 
 import { DateTimeBaseEntity } from "./date.time.entity";
 import AppUtils from "../utils/app.utilities";
 import { TrackingPlan } from "./tracking.plan.entity";
-import { EventTrackingPlan } from "./event.tracking.plan";
 
 @Entity()
 export class Event extends DateTimeBaseEntity {
@@ -19,9 +18,8 @@ export class Event extends DateTimeBaseEntity {
     public rules!: object;
 
     @ManyToMany(() => TrackingPlan, trackingPlan => trackingPlan.events)
-    @JoinTable()
+    @JoinTable({name: "tracking_plan_event", 
+        joinColumn: { name : "event_id"},
+        inverseJoinColumn: { name: "tracking_plan_id"}})
     public trackingPlans!: TrackingPlan[];
-
-    @OneToMany(() => EventTrackingPlan, etp => etp.event)
-    public eventTrackingPlans!: EventTrackingPlan[];
 }

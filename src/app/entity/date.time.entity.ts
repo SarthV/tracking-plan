@@ -11,6 +11,6 @@ export class DateTimeBaseEntity {
     })
     updatedAt: Date = new Date();
 
-    @Column()
-    isDeleted: boolean = true;
+    @Column({type : "boolean"})
+    isDeleted: boolean = false;
 }
