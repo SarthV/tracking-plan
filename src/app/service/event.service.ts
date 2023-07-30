@@ -1,4 +1,4 @@
-import { getConnection, getRepository } from "typeorm";
+import { DataSource, getConnection, getRepository } from "typeorm";
 import { Event } from "../entity/event.entity";
 import { EventModel } from "../domain/event.model";
 import EntityAlreadyExists from "../error/entity.already.exist.error";
@@ -12,11 +12,11 @@ const getAllEvents = async () => {
     .getMany();
 }
 
-const getEventsByName = async (eventNameList : String[] ) => {
+const getEventsByName = async (eventNameList : String[], connection : DataSource) => {
     if (_.isEmpty(eventNameList)) {
         return [];
     }
-    const eventRepository = getRepository(Event);
+    const eventRepository = _.isEmpty(connection) ? getRepository(Event) : connection.getRepository(Event);
     const result = await eventRepository.createQueryBuilder("event")
         .where("event.name IN (:eventNameList)", {eventNameList})
         .andWhere("event.isDeleted = false")

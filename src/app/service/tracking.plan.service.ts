@@ -1,4 +1,4 @@
-import { getCustomRepository, getRepository } from "typeorm";
+import { getConnection, getCustomRepository, getRepository } from "typeorm";
 import { TrackingPlanModel } from "../domain/tracking.plan.model";
 import { TrackingPlan } from "../entity/tracking.plan.entity";
 import logger from "../config/logger";
@@ -10,15 +10,19 @@ import EntityAlreadyExists from "../error/entity.already.exist.error";
 import * as _ from "lodash";
 
 const createTrackingPlan = async (trackingPlanModel: TrackingPlanModel) => {
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-        const trackingPlanRepository = getRepository(TrackingPlan);
+        const trackingPlanRepository = connection.getRepository(TrackingPlan);
         const existingTrackingPlan = await trackingPlanRepository.createQueryBuilder("trackingPlan")
             .where("trackingPlan.name = :name", {name : trackingPlanModel.name}).getOne();
         if (existingTrackingPlan != null || existingTrackingPlan != undefined) {
             throw new EntityAlreadyExists(`TrackingPlan already exists with the same name. Name = ${existingTrackingPlan.name}`);
         }
         if (!_.isEmpty(trackingPlanModel.events)) {
-            const existingEvents = await eventService.getEventsByName(trackingPlanModel.events.map((eventModel) => eventModel.name));
+            const existingEvents = await eventService.getEventsByName(trackingPlanModel.events.map((eventModel) => eventModel.name), connection);
             if (!_.isEmpty(existingEvents)) {
                 throw new EntityAlreadyExists(`Event(s) already present. Existing events: ${JSON.stringify(existingEvents)}`);
             }
@@ -28,7 +32,10 @@ const createTrackingPlan = async (trackingPlanModel: TrackingPlanModel) => {
         return trackingPlanEntity;
     } catch (error) {
         logger.error(`Error in creating tracking plan. Error: ${error}`);
+        await queryRunner.rollbackTransaction();
         throw error;
+    } finally {
+        await queryRunner.release();
     }
 }
 
