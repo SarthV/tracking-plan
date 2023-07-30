@@ -50,6 +50,7 @@ const createEvent = async (eventModel: EventModel, trackingPlanList?: TrackingPl
             const trackingPlanRepo = connection.getRepository(TrackingPlan);
             await trackingPlanRepo.save(trackingPlanList);
         }
+        await queryRunner.commitTransaction();
         return eventEntity;
     } catch (error) {
         await queryRunner.rollbackTransaction();

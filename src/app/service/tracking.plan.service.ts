@@ -3,9 +3,7 @@ import { TrackingPlanModel } from "../domain/tracking.plan.model";
 import { TrackingPlan } from "../entity/tracking.plan.entity";
 import logger from "../config/logger";
 import eventService from "./event.service";
-import { EventModel } from "../domain/event.model";
 import MapUtils from "../utils/map.utils";
-import { TrackingPlanRepository } from "../repository/tracking.plan.repository";
 import EntityAlreadyExists from "../error/entity.already.exist.error";
 import * as _ from "lodash";
 
@@ -29,6 +27,7 @@ const createTrackingPlan = async (trackingPlanModel: TrackingPlanModel) => {
         }
         const trackingPlanEntity = MapUtils.mapTrackingPlanModelToEntity(trackingPlanModel);
         await trackingPlanRepository.save(trackingPlanEntity);
+        await queryRunner.commitTransaction();
         return trackingPlanEntity;
     } catch (error) {
         logger.error(`Error in creating tracking plan. Error: ${error}`);
