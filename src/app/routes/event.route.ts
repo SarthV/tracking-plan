@@ -5,6 +5,6 @@ const eventRouter = Router();
 
 eventRouter.get("/", eventController.getAllEvents);
 
-eventRouter.post("/", eventController.createEventForTrackingPlans);
+eventRouter.post("/", eventController.createEvent);
 
 export default eventRouter;

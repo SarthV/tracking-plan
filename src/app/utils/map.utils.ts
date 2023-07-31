@@ -1,12 +1,14 @@
 import _ from "lodash";
-import { EventModel } from "../domain/event.model";
-import { TrackingPlanModel } from "../domain/tracking.plan.model"
+import { EventModel } from "../requestModels/event.model";
+import { TrackingPlanModel } from "../requestModels/tracking.plan.model"
 import { Event } from "../entity/event.entity";
 import { TrackingPlan } from "../entity/tracking.plan.entity"
 
 const mapTrackingPlanModelToEntity = (trackingPlanModel: TrackingPlanModel) => {
     const trackingPlanEntity = new TrackingPlan();
     trackingPlanEntity.name = trackingPlanModel.name;
+    trackingPlanEntity.description = trackingPlanModel.description;
+    trackingPlanEntity.source = trackingPlanModel.source;
     trackingPlanEntity.events = mapEventModelListToEntityList(trackingPlanModel.events);
     return trackingPlanEntity;
 }

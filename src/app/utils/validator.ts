@@ -1,7 +1,7 @@
 import Joi from "joi";
-import { TrackingPlanModel } from "../domain/tracking.plan.model";
+import { TrackingPlanModel } from "../requestModels/tracking.plan.model";
 import BadRequestError from "../error/bad.request.error";
-import { EventModel } from "../domain/event.model";
+import { EventModel } from "../requestModels/event.model";
 
 const createEventSchema = Joi.object({
     name: Joi.string().required().min(1),
@@ -14,6 +14,7 @@ const createTrackingPlanSchema = Joi.object({
     name: Joi.string().required().min(1),
     description: Joi.string().allow(""),
     events: Joi.array().items(createEventSchema),
+    source: Joi.string().required().min(1),
 });
 
 const validateCreateTrackingPlanReq = (trackingPlanModel: TrackingPlanModel) => {

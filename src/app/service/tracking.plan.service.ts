@@ -1,12 +1,17 @@
 import { getConnection, getCustomRepository, getRepository } from "typeorm";
-import { TrackingPlanModel } from "../domain/tracking.plan.model";
+import { TrackingPlanModel } from "../requestModels/tracking.plan.model";
 import { TrackingPlan } from "../entity/tracking.plan.entity";
 import logger from "../config/logger";
 import eventService from "./event.service";
 import MapUtils from "../utils/map.utils";
 import EntityAlreadyExists from "../error/entity.already.exist.error";
 import * as _ from "lodash";
+import trackingPlanRepositoryHelper from "../repository/tracking.plan.repository.helper";
+import InternalServerError from "../error/internal.server.error";
 
+/* 
+The below method does not allow duplicate tracking plan and events to be created.
+**/
 const createTrackingPlan = async (trackingPlanModel: TrackingPlanModel) => {
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
@@ -32,7 +37,7 @@ const createTrackingPlan = async (trackingPlanModel: TrackingPlanModel) => {
     } catch (error) {
         logger.error(`Error in creating tracking plan. Error: ${error}`);
         await queryRunner.rollbackTransaction();
-        throw error;
+        throw new InternalServerError(_.isEmpty(error.mesage) ? error.mesage: "Error in creating tracking plan. Something went wrong");
     } finally {
         await queryRunner.release();
     }
@@ -40,12 +45,7 @@ const createTrackingPlan = async (trackingPlanModel: TrackingPlanModel) => {
 
 const getAllTrackingPlans = async () => {
     try {
-        const trackingPlanRepository = getRepository(TrackingPlan);
-        const trackingPlanList = await trackingPlanRepository.createQueryBuilder("trackingPlan")
-            .leftJoinAndSelect("trackingPlan.events", "events")
-            .where("trackingPlan.isDeleted = false")
-            .getMany();
-        return trackingPlanList;
+        return await trackingPlanRepositoryHelper.getTrackingPlanRepository();
     } catch (error) {
         logger.error(`Error in fetching tracking plans`);
         throw error;

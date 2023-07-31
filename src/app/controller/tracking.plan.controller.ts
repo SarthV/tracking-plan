@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { TrackingPlanModel } from "../domain/tracking.plan.model";
+import { TrackingPlanModel } from "../requestModels/tracking.plan.model";
 import trackingPlanService from "../service/tracking.plan.service";
-import logger from "../config/logger";
 import validator from "../utils/validator";
 
 const createTrackingPlan = async (req: Request, res: Response) => {

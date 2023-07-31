@@ -1,6 +1,6 @@
 import { DataSource, getConnection, getRepository } from "typeorm";
 import { Event } from "../entity/event.entity";
-import { EventModel } from "../domain/event.model";
+import { EventModel } from "../requestModels/event.model";
 import EntityAlreadyExists from "../error/entity.already.exist.error";
 import mapUtils from "../utils/map.utils";
 import { TrackingPlan } from "../entity/tracking.plan.entity";

@@ -14,6 +14,9 @@ export class TrackingPlan extends DateTimeBaseEntity {
     @Column()
     public description!: string;
 
+    @Column()
+    public source!: string;
+
     @ManyToMany(() => Event, event => event.trackingPlans, { cascade: true })
     @JoinTable({name : "tracking_plan_event",
     joinColumn: {name: "tracking_plan_id"},

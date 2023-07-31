@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import eventService from "../service/event.service"
-import { EventModel } from "../domain/event.model";
+import { EventModel } from "../requestModels/event.model";
 import validator from "../utils/validator";
 import trackingPlanService from "../service/tracking.plan.service";
 import BadRequestError from "../error/bad.request.error";
@@ -16,7 +16,7 @@ const getAllEvents = async (req: Request, res: Response) => {
     }
 }
 
-const createEventForTrackingPlans = async (req: Request, res: Response) => {
+const createEvent = async (req: Request, res: Response) => {
     try {
         const eventModel: EventModel = req.body;
         validator.validateCreateEventReq(eventModel);
@@ -34,5 +34,5 @@ const createEventForTrackingPlans = async (req: Request, res: Response) => {
 
 export default {
     getAllEvents,
-    createEventForTrackingPlans
+    createEvent
 }

@@ -4,7 +4,7 @@ class EntityAlreadyExists extends Error {
     constructor(message: string) {
       super(message);
       this.name = "EntityAlreadyExists";
-      this.statusCode = 500;
+      this.statusCode = 409;
       Object.setPrototypeOf(this, EntityAlreadyExists.prototype);
     }
   }
