@@ -40,7 +40,9 @@ const createEvent = async (eventModel: EventModel, trackingPlanList?: TrackingPl
         const existingEvent = await eventRepository.createQueryBuilder("event")
             .where("event.name = :name", {name: eventModel.name})
             .getOne();
-        if(existingEvent != null && existingEvent.name == eventModel.name) {
+        if(existingEvent != undefined && 
+            existingEvent != null &&
+            existingEvent.name == eventModel.name) {
             throw new EntityAlreadyExists(`This event with name: ${eventModel.name} already exists`);
         }
         const eventEntity = mapUtils.mapEventModelToEntity(eventModel);

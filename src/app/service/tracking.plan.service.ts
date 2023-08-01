@@ -71,6 +71,10 @@ const getTrackingPlansByName = async (names: string[]) => {
     }
 }
 
+/*
+The method allows editing tracking plan and its associated events.
+Here the user has the capability to re-assign the events for a particular tracking plan.
+**/
 const editTrackingPlan = async (editTrackingPlanReq : EditTrackingPlanRequest) => {
     const existingEntity = await getRepository(TrackingPlan)
         .createQueryBuilder("trackingPlan")
