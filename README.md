@@ -2,6 +2,12 @@
 
 This is a basic application allowing an user to create and view tracking plans adn its associated events.
 
+<img width="1266" alt="image" src="https://github.com/SarthV/tracking-plan/assets/52134948/f9d33564-9981-420a-800a-65897f148268">
+
+<img width="1223" alt="image" src="https://github.com/SarthV/tracking-plan/assets/52134948/6134f86d-f5ff-46d1-b1f0-37c812daf588">
+
+
+
 Initial DB Setup: 
 The application uses MySQL as its main database. Please use the below credentials to connect to the DB instance or change the values as per your credentials in the code.
 
