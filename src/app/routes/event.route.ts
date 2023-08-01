@@ -7,4 +7,6 @@ eventRouter.get("/", eventController.getAllEvents);
 
 eventRouter.post("/", eventController.createEvent);
 
+eventRouter.get("/:id", eventController.getEventById);
+
 export default eventRouter;

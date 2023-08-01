@@ -1,5 +1,5 @@
 import { getConnection, getCustomRepository, getRepository } from "typeorm";
-import { TrackingPlanModel } from "../requestModels/tracking.plan.model";
+import { TrackingPlanModel } from "../models/tracking.plan.model";
 import { TrackingPlan } from "../entity/tracking.plan.entity";
 import logger from "../config/logger";
 import eventService from "./event.service";
@@ -8,6 +8,10 @@ import EntityAlreadyExists from "../error/entity.already.exist.error";
 import * as _ from "lodash";
 import trackingPlanRepositoryHelper from "../repository/tracking.plan.repository.helper";
 import InternalServerError from "../error/internal.server.error";
+import { EditTrackingPlanRequest } from "../models/edit.tracking.plan.model";
+import BadRequestError from "../error/bad.request.error";
+import mapUtils from "../utils/map.utils";
+import eventController from "../controller/event.controller";
 
 /* 
 The below method does not allow duplicate tracking plan and events to be created.
@@ -20,7 +24,9 @@ const createTrackingPlan = async (trackingPlanModel: TrackingPlanModel) => {
     try {
         const trackingPlanRepository = connection.getRepository(TrackingPlan);
         const existingTrackingPlan = await trackingPlanRepository.createQueryBuilder("trackingPlan")
-            .where("trackingPlan.name = :name", {name : trackingPlanModel.name}).getOne();
+            .where("trackingPlan.name = :name", {name : trackingPlanModel.name})
+            .andWhere("trackingPlan.isDeleted = false")
+            .getOne();
         if (existingTrackingPlan != null || existingTrackingPlan != undefined) {
             throw new EntityAlreadyExists(`TrackingPlan already exists with the same name. Name = ${existingTrackingPlan.name}`);
         }
@@ -65,8 +71,29 @@ const getTrackingPlansByName = async (names: string[]) => {
     }
 }
 
+const editTrackingPlan = async (editTrackingPlanReq : EditTrackingPlanRequest) => {
+    const existingEntity = await getRepository(TrackingPlan)
+        .createQueryBuilder("trackingPlan")
+        .where("trackingPlan.id = :id", {id : editTrackingPlanReq.id})
+        .getOne();
+    if (_.isEmpty(existingEntity)) {
+        throw new BadRequestError("Tracking plan does not exist");
+    }
+    let eventsToBeAssigned = [];
+    if (!_.isEmpty(editTrackingPlanReq.events)) {
+        eventsToBeAssigned = await eventService.getEventsByName(editTrackingPlanReq.events.map((eventModel) => eventModel.name))
+        if (eventsToBeAssigned.length != editTrackingPlanReq.events.length) {
+            throw new BadRequestError("Events not found. Provided event name(s) do not exist");
+        }
+    }
+    mapUtils.mapEditTrackingPlanModelToEntity(existingEntity, editTrackingPlanReq, eventsToBeAssigned);
+    await getRepository(TrackingPlan).save(existingEntity);
+    return existingEntity;
+}
+
 export default {
     createTrackingPlan,
     getAllTrackingPlans,
-    getTrackingPlansByName
+    getTrackingPlansByName,
+    editTrackingPlan
 }

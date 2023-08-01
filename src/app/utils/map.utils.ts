@@ -1,8 +1,9 @@
 import _ from "lodash";
-import { EventModel } from "../requestModels/event.model";
-import { TrackingPlanModel } from "../requestModels/tracking.plan.model"
+import { EventModel } from "../models/event.model";
+import { TrackingPlanModel } from "../models/tracking.plan.model"
 import { Event } from "../entity/event.entity";
 import { TrackingPlan } from "../entity/tracking.plan.entity"
+import { EditTrackingPlanRequest } from "../models/edit.tracking.plan.model";
 
 const mapTrackingPlanModelToEntity = (trackingPlanModel: TrackingPlanModel) => {
     const trackingPlanEntity = new TrackingPlan();
@@ -36,7 +37,15 @@ const mapEventModelListToEntityList = (eventModelList: EventModel[]) => {
     return eventEntityList;
 }
 
+const mapEditTrackingPlanModelToEntity = (existingEntity: TrackingPlan, editTrackingPlanReq: EditTrackingPlanRequest, eventsToBeAssigned: Event[]) => {
+    existingEntity.description = editTrackingPlanReq.description;
+    existingEntity.name = editTrackingPlanReq.name;
+    existingEntity.source = editTrackingPlanReq.source;
+    existingEntity.events = eventsToBeAssigned;
+}
+
 export default {
     mapTrackingPlanModelToEntity,
-    mapEventModelToEntity
+    mapEventModelToEntity,
+    mapEditTrackingPlanModelToEntity
 }

@@ -8,7 +8,7 @@ export const myDataSource = {
   username: "root",
   host: process.env.MYSQL_HOST,
   database: "tracking_plan",
-  password: "password",
+  password: "22sarthV!",
   port: 3306,
   synchronize: false,
   entities: [TrackingPlan, Event],

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { TrackingPlanModel } from "../requestModels/tracking.plan.model";
+import { TrackingPlanModel } from "../models/tracking.plan.model";
 import trackingPlanService from "../service/tracking.plan.service";
 import validator from "../utils/validator";
 
@@ -25,7 +25,21 @@ const getAllTrackingPlan = async (req: Request, res: Response) => {
     }
 }
 
+const editTrackingPlan = async (req: Request, res: Response) => {
+    try {
+        const editTrackingPlanReq = req.body;
+        validator.validateEditTrackingPlanReq(editTrackingPlanReq)
+        const editedEntity = await trackingPlanService.editTrackingPlan(editTrackingPlanReq);
+        res.status(200).json(editedEntity);
+    } catch (error: any) {
+        const errMessage = `Error in editing tracking plan`;
+        res.status(error.statusCode || 500)
+            .json({ mesage: error.message || errMessage, data: error});
+    }
+}
+
 export default {
     createTrackingPlan,
-    getAllTrackingPlan
+    getAllTrackingPlan,
+    editTrackingPlan
 }

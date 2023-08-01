@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import eventService from "../service/event.service"
-import { EventModel } from "../requestModels/event.model";
+import { EventModel } from "../models/event.model";
 import validator from "../utils/validator";
 import trackingPlanService from "../service/tracking.plan.service";
 import BadRequestError from "../error/bad.request.error";
@@ -32,7 +32,17 @@ const createEvent = async (req: Request, res: Response) => {
     }
 }
 
+const getEventById = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const eventEntity = await eventService.getEventById(id);
+    if (_.isEmpty(eventEntity)) {
+        res.status(500).json({message: `No event exists for the id: ${id}`});
+    }
+    res.status(200).json(eventEntity);
+}
+
 export default {
     getAllEvents,
-    createEvent
+    createEvent,
+    getEventById
 }

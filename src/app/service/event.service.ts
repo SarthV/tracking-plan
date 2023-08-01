@@ -1,6 +1,6 @@
 import { DataSource, getConnection, getRepository } from "typeorm";
 import { Event } from "../entity/event.entity";
-import { EventModel } from "../requestModels/event.model";
+import { EventModel } from "../models/event.model";
 import EntityAlreadyExists from "../error/entity.already.exist.error";
 import mapUtils from "../utils/map.utils";
 import { TrackingPlan } from "../entity/tracking.plan.entity";
@@ -12,7 +12,13 @@ const getAllEvents = async () => {
     .getMany();
 }
 
-const getEventsByName = async (eventNameList : String[], connection : DataSource) => {
+const getEventById = async (id: string) => {
+    return await getRepository(Event).createQueryBuilder("event")
+        .where("event.id = :id", {id})
+        .getOne();
+}
+
+const getEventsByName = async (eventNameList : String[], connection ?: DataSource) => {
     if (_.isEmpty(eventNameList)) {
         return [];
     }
@@ -63,5 +69,6 @@ const createEvent = async (eventModel: EventModel, trackingPlanList?: TrackingPl
 export default {
     getEventsByName,
     getAllEvents,
+    getEventById,
     createEvent
 }

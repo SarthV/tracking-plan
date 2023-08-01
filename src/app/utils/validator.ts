@@ -1,7 +1,8 @@
 import Joi from "joi";
-import { TrackingPlanModel } from "../requestModels/tracking.plan.model";
+import { TrackingPlanModel } from "../models/tracking.plan.model";
 import BadRequestError from "../error/bad.request.error";
-import { EventModel } from "../requestModels/event.model";
+import { EventModel } from "../models/event.model";
+import { EditTrackingPlanRequest } from "../models/edit.tracking.plan.model";
 
 const createEventSchema = Joi.object({
     name: Joi.string().required().min(1),
@@ -15,6 +16,21 @@ const createTrackingPlanSchema = Joi.object({
     description: Joi.string().allow(""),
     events: Joi.array().items(createEventSchema),
     source: Joi.string().required().min(1),
+});
+
+const editEventSchema = Joi.object({
+  id: Joi.string().required().min(1),
+  name: Joi.string().required().min(1),
+  description: Joi.string().allow(""),
+  rules: Joi.object().required(),
+});
+
+const editTrackingPlanSchema = Joi.object({
+  id: Joi.string().required().min(1),
+  name: Joi.string().required().min(1),
+  description: Joi.string().allow(""),
+  events: Joi.array().items(editEventSchema),
+  source: Joi.string().required().min(1),
 });
 
 const validateCreateTrackingPlanReq = (trackingPlanModel: TrackingPlanModel) => {
@@ -31,7 +47,15 @@ const validateCreateEventReq = (eventModel: EventModel) => {
   }
 }
 
+const validateEditTrackingPlanReq = (editTrackingPlanReq: EditTrackingPlanRequest) => {
+  const {error} = editTrackingPlanSchema.validate(editTrackingPlanReq);
+  if (error) {
+    throw new BadRequestError(`Invalid edit tracking plan data. Error: ${error.message}`);
+  }
+}
+
 export default {
     validateCreateTrackingPlanReq,
-    validateCreateEventReq
+    validateCreateEventReq,
+    validateEditTrackingPlanReq
 }

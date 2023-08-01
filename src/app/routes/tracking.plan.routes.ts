@@ -7,4 +7,6 @@ trackingPlanRouter.post("/", trackingPlanController.createTrackingPlan);
 
 trackingPlanRouter.get("/", trackingPlanController.getAllTrackingPlan);
 
+trackingPlanRouter.put("/edit", trackingPlanController.editTrackingPlan);
+
 export default trackingPlanRouter;
