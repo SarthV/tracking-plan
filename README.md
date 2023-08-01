@@ -53,4 +53,5 @@ CREATE TABLE tracking_plan_event (
 ```
 
 To run this backend service, clone the repo and runt the below commands:
+``` npm install ```
 ``` npm run build && npm run start```
